@@ -67,6 +67,13 @@ userSchema.methods.generateToken = async function () {
   }
 };
 
+
+// comparePassword
+userSchema.methods.comparePassword = async function (password) {
+  return bcrypt.compare(password, this.password);
+};
+
+
 // define the model or the collection name
 const User = new mongoose.model("USER", userSchema);
 module.export = User; 
