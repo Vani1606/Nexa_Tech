@@ -5,10 +5,13 @@ const app = express();
 const authRoute=require("./router/auth-router");
 const connectDb = require("./utils/db");
 const errorMiddleware = require("./middlewares/error-middleware");
+const contactRoute = require("./routes/contact-route");
 
 
 // Mount the Router: To use the router in your main Express app, you can "mount" it at a specific URL prefix
 app.use("/api/auth", authRoute);
+app.use("/api/form", contactRoute);
+
 
 app.use(errorMiddleware);
 
