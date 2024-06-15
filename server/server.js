@@ -1,17 +1,27 @@
 require("dotenv").config();
 
 const express = require("express");
-const app = express();
+const cors = require("cors");
 const authRoute=require("./router/auth-router");
 const connectDb = require("./utils/db");
 const errorMiddleware = require("./middlewares/error-middleware");
-const contactRoute = require("./routes/contact-route");
+const contactRoute = require("./router/contact-router");
 
+const app = express();
+
+const corsOptions = {
+  origin: "http://localhost:5175",
+  methods: "GET, POST, PUT, DELETE, PATCH, HEAD",
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+// to get the json data in express app.
+app.use(express.json());
 
 // Mount the Router: To use the router in your main Express app, you can "mount" it at a specific URL prefix
 app.use("/api/auth", authRoute);
 app.use("/api/form", contactRoute);
-
 
 app.use(errorMiddleware);
 

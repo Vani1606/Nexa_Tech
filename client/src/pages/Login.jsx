@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../store/auth";
 
 export const Login = () => {
   const [user, setUser] = useState({
     email: "",
     password: "",
   });
+
+  const { saveTokenInLocalStr } = useAuth();
 
   const navigate = useNavigate();
 
@@ -20,15 +23,28 @@ export const Login = () => {
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     // Perform validation and authentication logic here
 
-    // If successful, navigate to another page, e.g., dashboard
-    if (user.email === "test@example.com" && user.password === "password") {
-      navigate("/dashboard");
-    } else {
-      alert("Invalid email or password");
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user),
+      });
+
+      if (response.ok) {
+        const responseData = await response.json();
+        console.log("after login: ", responseData);
+        // toast.success("Registration Successful");
+        saveTokenInLocalStr(responseData.token);
+        navigate("/");
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
