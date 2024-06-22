@@ -1,72 +1,93 @@
-// *----------------------
-//* Controllers
-// *----------------------
-//? In an Express.js application, a "controller" refers to a part of your code that is responsible for handling the application's logic. Controllers are typically used to process incoming requests, interact with models (data sources), and send responses back to clients. They help organize your application by separating concerns and following the MVC (Model-View-Controller) design pattern.
+const User = require("../models/user-model");
+const bcrypt=require("bcryptjs");
+//HOME LOGIC
 
-const User = require("../models/user-model.js");
 
-// *-------------------
-// Home Logic
-// *-------------------
-const home = async (req, res) => {
-  try {
-    res.status(200).json({ msg: "Welcome to our home page" });
-  } catch (error) {
-    console.log(error);
-  }
+const home=async(req,res)=>{
+    try{
+        res
+        .status(200)
+        .send("HOME");
+    }
+    catch(error)
+    {
+        console.log(error);
+    }
 };
 
-// *-------------------
-// Registration Logic
-// *-------------------
-const register = async (req, res) => {
-  try {
 
-    const { username, email, phone, password } = req.body;
+//USER REGISTER LOGIC
+const register=async(req,res)=>{
+    try{
+        console.log(req.body);
 
-    const userExist = await User.findOne({ email: email });
+        const {username,email,phone,password}=req.body;
 
-    if (userExist) {
-      return res.status(400).json({ msg: "email already exists" });
+        const userExist=await User.findOne({email});
+
+        if(userExist)
+        {
+            return res.status(400).json({message:"email already exists"});
+        }
+
+       const newUser= await User.create({username,email,phone,password});
+    
+        res.status(200)
+        .json({ msg:"Registration successful",token:await newUser.generateToken(),userId:newUser._id.toString(), 
+           
+        });
     }
+    catch(error)
+    {
+        res.status(500).json("internal server error");
+    }
+};
 
-    const userCreated = await User.create({ username, email, phone, password });
+//USER LOGIN LOGIC
 
-    res.status(201).json({
-      msg: "Registration Successful",
-      token: await userCreated.generateToken(),
-      userId: userCreated._id.toString(),
+const login=async (req,res)=>
+{
+    try{
+const {email,password}=req.body;
+const userExist=await User.findOne({email});
+console.log(userExist);
+
+if(!userExist)
+{
+    return res.status(400).json({message:"invalid credentials"});
+}
+
+const user=await bcrypt.compare(password,userExist.password);
+if(user)
+{
+    res.status(200).json({
+        msg:"login successful",
+        token:await userExist.generateToken(),
+        userId:userExist._id.toString(),
     });
-  } catch (error) {
-    res.status(500).json({ message: "Internal server error" });
-  }
+}
+else
+{
+    res.status(401).json({message:"invalid email or password"});
+}
+    }
+    catch{
+        res.status(500).json("internal server error");
+    }
 };
 
-const login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
 
-    const userExist = await User.findOne({ email });
+//USER LOGIC
 
-    if (!userExist) {
-      return res.status(400).json({ message: "Invalid credentials" });
+const user = async (req, res) => {
+    try {
+      // const userData = await User.find({});
+      const userData = req.user;
+      console.log(userData);
+      return res.status(200).json({ userData });
+    } catch (error) {
+      console.log(` error from user route ${error}`);
     }
+  };
 
-    // const user = await bcrypt.compare(password, userExist.password);
-    const isPasswordValid = await userExist.comparePassword(password);
-
-    if (isPasswordValid) {
-      res.status(200).json({
-        message: "Login Successful",
-        token: await userExist.generateToken(),
-        userId: userExist._id.toString(),
-      });
-    } else {
-      res.status(401).json({ message: "Invalid email or passord " });
-    }
-  } catch (error) {
-    res.status(500).json({ message: "Internal server error" });
-  }
-};
-
-module.exports = { home, register,login };
+module.exports={home,register,login,user};
