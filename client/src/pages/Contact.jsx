@@ -1,31 +1,68 @@
 import { useState } from "react";
+import { useAuth } from "../store/auth";
+
+
+const defaultContactFormData = {
+  username: "",
+  email: "",
+  message: "",
+};
 
 export const Contact = () => {
-  const [contact, setContact] = useState({
-    username: "",
-    email: "",
-    message: "",
-  });
+
+  const [data, setData] = useState(defaultContactFormData);
+
+  const { user } = useAuth();
+
+  const [userData, setUserData] = useState(true);
+
+  if (userData && user) {
+    setData({
+      username: user.username,
+      email: user.email,
+      message: "",
+    });
+    setUserData(false);
+  }
+
 
   // lets tackle our handleInput
   const handleInput = (e) => {
     const name = e.target.name;
     const value = e.target.value;
 
-    setContact({
-      ...contact,
-      [name]: value,
-    });
+    setData((prev) => ({ ...prev, [name]: value }));
   };
 
   // handle fomr getFormSubmissionInfo
-  const handleSubmit = (e) => {
+  const handleContactForm = async (e) => {
     e.preventDefault();
 
-    console.log(contact);
-  };
+    try {
+      const response = await fetch("http://localhost:5000/api/form/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
 
-//  Help me reach 1 Million subs 👉 https://youtube.com/thapatechnical
+      console.log("response: ", response);
+      // alert(response);
+
+      if (response.ok) {
+        setData(defaultContactFormData);
+        const responseData = await response.json();
+        alert(responseData);
+        console.log(responseData);
+      } else {
+        // Handle API error here
+        console.error("API Error:", response.status, response.statusText);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <>
@@ -41,7 +78,7 @@ export const Contact = () => {
 
           {/* contact form content actual  */}
           <section className="section-form">
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleContactForm}>
               <div>
                 <label htmlFor="username">username</label>
                 <input
@@ -49,7 +86,7 @@ export const Contact = () => {
                   name="username"
                   id="username"
                   autoComplete="off"
-                  value={contact.username}
+                  value={data.username}
                   onChange={handleInput}
                   required
                 />
@@ -62,7 +99,7 @@ export const Contact = () => {
                   name="email"
                   id="email"
                   autoComplete="off"
-                  value={contact.email}
+                  value={data.email}
                   onChange={handleInput}
                   required
                 />
@@ -74,7 +111,7 @@ export const Contact = () => {
                   name="message"
                   id="message"
                   autoComplete="off"
-                  value={contact.message}
+                  value={data.message}
                   onChange={handleInput}
                   required
                   cols="30"
