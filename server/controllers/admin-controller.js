@@ -1,4 +1,5 @@
 const User = require("../models/user-model");
+const Contact = require("../models/contact-model");
 
 // *-------------------------------
 //* getAllUsers Logic 📝
