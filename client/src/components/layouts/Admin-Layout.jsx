@@ -23,7 +23,7 @@ export const AdminLayout = () => {
             <ul>
               <li>
                 <NavLink to="/admin/users">
-                  <FaUser /> users
+                  <FaUser /> Users
                 </NavLink>
               </li>
               <li>
