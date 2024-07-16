@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../store/auth";
-import { toast } from "react-toastify";
 
 export const AdminContacts = () => {
   const [contactData, setContactData] = useState([]);
@@ -24,8 +23,6 @@ export const AdminContacts = () => {
     }
   };
 
-  // defining the funciton deleteContactById
-
   const deleteContactById = async (id) => {
     try {
       const response = await fetch(`${API}/api/admin/contacts/delete/${id}`, {
@@ -36,9 +33,9 @@ export const AdminContacts = () => {
       });
       if (response.ok) {
         getContactsData();
-        toast.success("deleted successfully");
+        alert("Deleted successfully");
       } else {
-        toast.error("Not Deleted ");
+        alert("Not Deleted");
       }
     } catch (error) {
       console.log(error);
@@ -54,7 +51,7 @@ export const AdminContacts = () => {
       <section className="admin-contacts-section">
         <h1>Admin Contact Data </h1>
 
-        <div className="container  admin-users">
+        <div className="container admin-users">
           {contactData.map((curContactData, index) => {
             const { username, email, message, _id } = curContactData;
 
@@ -64,7 +61,7 @@ export const AdminContacts = () => {
                 <p>{email}</p>
                 <p>{message}</p>
                 <button className="btn" onClick={() => deleteContactById(_id)}>
-                  delete
+                  Delete
                 </button>
               </div>
             );

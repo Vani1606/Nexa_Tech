@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Home } from "./pages/Home";
 import { About } from "./pages/About";
 import { Contact } from "./pages/Contact";
@@ -9,12 +9,13 @@ import { Logout } from "./pages/Logout";
 import { Navbar } from "./components/Navbar";
 import { Error } from "./pages/Error";
 import { AdminLayout } from "./components/layouts/Admin-Layout";
-import { AdminUsers } from "./pages/Admin-Users"; // Import AdminUsers
-import { AdminContacts } from "./pages/Admin-Contacts"; // Import AdminContacts
+import { AdminUsers } from "./pages/Admin-Users";
+import { AdminContacts } from "./pages/Admin-Contacts";
+import { AdminUpdate } from "./pages/Admin-Update";
 
 const App = () => {
   return (
-    <Router>
+    <BrowserRouter>
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
@@ -28,9 +29,10 @@ const App = () => {
         <Route path="/admin" element={<AdminLayout />}>
           <Route path="users" element={<AdminUsers />} />
           <Route path="contacts" element={<AdminContacts />} />
+          <Route path="users/:id/edit" element={<AdminUpdate />} />
         </Route>
       </Routes>
-    </Router>
+    </BrowserRouter>
   );
 };
 

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../store/auth";
-import { toast } from "react-toastify";
 
 export const AdminUpdate = () => {
   const [data, setData] = useState({
@@ -14,7 +13,7 @@ export const AdminUpdate = () => {
   console.log("params single user: ", params);
   const { authorizationToken, API } = useAuth();
 
-  //   get single user data
+  // Get single user data
   const getSingleUserData = async () => {
     try {
       const response = await fetch(`${API}/api/admin/users/${params.id}`, {
@@ -26,10 +25,6 @@ export const AdminUpdate = () => {
       const data = await response.json();
       console.log(`users single data:  ${data}`);
       setData(data);
-
-      //   if (response.ok) {
-      //     getAllUsersData();
-      //   }
     } catch (error) {
       console.log(error);
     }
@@ -49,7 +44,7 @@ export const AdminUpdate = () => {
     });
   };
 
-  // to udpate the data dynamically
+  // To update the data dynamically
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -67,9 +62,9 @@ export const AdminUpdate = () => {
       );
 
       if (response.ok) {
-        toast.success("Updated successfully");
+        alert("Updated successfully");
       } else {
-        toast.error("Not Updated ");
+        alert("Not Updated");
       }
     } catch (error) {
       console.log(error);
@@ -81,13 +76,13 @@ export const AdminUpdate = () => {
       <div className="contact-content container">
         <h1 className="main-heading">Update User Data</h1>
       </div>
-      {/* contact page main  */}
+      {/* Contact page main */}
       <div className="container grid grid-two-cols">
-        {/* contact form content actual  */}
+        {/* Contact form content actual */}
         <section className="section-form">
           <form onSubmit={handleSubmit}>
             <div>
-              <label htmlFor="username">username</label>
+              <label htmlFor="username">Username</label>
               <input
                 type="text"
                 name="username"
@@ -100,7 +95,7 @@ export const AdminUpdate = () => {
             </div>
 
             <div>
-              <label htmlFor="email">email</label>
+              <label htmlFor="email">Email</label>
               <input
                 type="email"
                 name="email"
